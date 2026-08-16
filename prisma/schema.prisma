@@ -15,10 +15,22 @@ model Product {
   orderItems      OrderItem[]
 }
 
+model Customer {
+  id             Int             @id @default(autoincrement())
+  name           String
+  email          String          @unique
+  phone          String?
+  address        String?
+  createdAt      DateTime        @default(now())
+  deliveryOrders DeliveryOrder[]
+}
+
 model DeliveryOrder {
-  id         Int         @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   orderNumber String      @unique
   status      String      @default("PENDING")
+  customerId  Int?
+  customer    Customer?   @relation(fields: [customerId], references: [id])
   createdAt   DateTime    @default(now())
   items       OrderItem[]
 }

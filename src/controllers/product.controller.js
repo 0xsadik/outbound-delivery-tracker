@@ -13,16 +13,24 @@ export async function createProduct(req, res) {
 }
 
 export async function getProducts(req, res) {
-    const products = await prisma.product.findMany();
-    res.json(products);
+    try {
+        const products = await prisma.product.findMany();
+        res.json(products);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 }
 
 export async function getProductById(req, res) {
-    const product = await prisma.product.findUnique({
-        where: {id: Number(req.params.id)},
-    });
-    if (!product) return res.status(404).json({error: "Product not found"});
-    res.json(product);
+    try {
+        const product = await prisma.product.findUnique({
+            where: { id: Number(req.params.id) },
+        });
+        if (!product) return res.status(404).json({ error: "Product not found" });
+        res.json(product);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 }
 
 
