@@ -1,4 +1,4 @@
-import prisma from '../prismaClient.js'; 
+import prisma from '../../prismaClient.js'; 
 
 export async function createProduct(req, res) {
     try {
@@ -17,7 +17,7 @@ export async function getProducts(req, res) {
     res.json(products);
 }
 
-export async function getProductsById(req, res) {
+export async function getProductById(req, res) {
     const product = await prisma.product.findUnique({
         where: {id: Number(req.params.id)},
     });

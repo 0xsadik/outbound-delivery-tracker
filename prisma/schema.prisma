@@ -4,7 +4,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model Product {
@@ -14,6 +13,14 @@ model Product {
   quantityInStock Int         @default(0)
   createdAt       DateTime    @default(now())
   orderItems      OrderItem[]
+}
+
+model DeliveryOrder {
+  id         Int         @id @default(autoincrement())
+  orderNumber String      @unique
+  status      String      @default("PENDING")
+  createdAt   DateTime    @default(now())
+  items       OrderItem[]
 }
 
 model OrderItem {
