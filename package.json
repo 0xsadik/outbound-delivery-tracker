@@ -1,0 +1,27 @@
+{
+  "name": "outbound-delivery-tracker",
+  "version": "1.0.0",
+  "description": "Backend service for tracking outbound deliveries, shipment status, and delivery events.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/0xsadik/outbound-delivery-tracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/0xsadik/outbound-delivery-tracker/issues"
+  },
+  "homepage": "https://github.com/0xsadik/outbound-delivery-tracker#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
