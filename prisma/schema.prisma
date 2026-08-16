@@ -16,3 +16,12 @@ model Product {
   orderItems      OrderItem[]
 }
 
+model OrderItem {
+  id              Int           @id @default(autoincrement())
+  deliveryOrderId Int
+  deliveryOrder   DeliveryOrder @relation(fields: [deliveryOrderId], references: [id])
+  productId       Int
+  product         Product       @relation(fields: [productId], references: [id])
+  qty             Int
+}
+
