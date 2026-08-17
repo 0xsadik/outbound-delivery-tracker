@@ -48,10 +48,18 @@ export async function updateProduct(req, res) {
 
 export async function deleteProduct(req, res) {
     try {
-        await prisma.product.delete({ where: {id: Number(req.params.id)}});
+        await prisma.product.delete({ where: { id: Number(req.params.id) } });
         res.status(204).send();
-    } catch(err) {
-        res.status(400).json({error: err.message});
+    } catch (err) {
+        if (err.code === 'P2003' || (err.message && err.message.includes('foreign key constraint'))) {
+            return res.status(409).json({
+                error: "Cannot delete product because it is referenced in existing order items."
+            });
+        }
+        if (err.code === 'P2025') {
+            return res.status(404).json({ error: "Product not found." });
+        }
+        res.status(400).json({ error: err.message });
     }
 }
 

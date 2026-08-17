@@ -44,3 +44,34 @@ model OrderItem {
   qty             Int
 }
 
+model DeliveryAgent {
+  id          Int        @id @default(autoincrement())
+  name        String
+  phone       String?
+  vehicleInfo String?
+  isActive    Boolean    @default(true)
+  deliveries  Delivery[]
+}
+
+// assigned -> picked_up -> in_transit -> delivered / failed to deliver 
+
+model Delivery {
+  id              Int            @id @default(autoincrement())
+  deliveryOrderId Int            @unique
+  deliveryOrder   DeliveryOrder  @relation(fields: [deliveryOrderId], references: [id])
+  agentId         Int?
+  agent           DeliveryAgent? @relation(fields: [agentId], references: [id])
+  status          String         @default("assigned")
+  dispatchedAt    DateTime?
+  deliveredAt     DateTime?
+}
+
+
+model StatusHistory {
+  id         Int      @id @default(autoincrement())
+  entityType String // "DeliveryOrder" | "Delivery"
+  entityId   Int
+  oldStatus  String?
+  newStatus  String
+  changedAt  DateTime @default(now())
+}

@@ -49,11 +49,19 @@ export async function updateCustomer(req, res) {
 export async function deleteCustomer(req, res) {
     try {
         await prisma.customer.delete({
-            where: {id: Number(req.params.id)}
+            where: { id: Number(req.params.id) }
         }); 
         res.status(204).send();
     } catch (err) {
-        res.status(400).json({error: err.message});
+        if (err.code === 'P2003' || (err.message && err.message.includes('foreign key constraint'))) {
+            return res.status(409).json({
+                error: "Cannot delete customer because they have existing delivery orders."
+            });
+        }
+        if (err.code === 'P2025') {
+            return res.status(404).json({ error: "Customer not found." });
+        }
+        res.status(400).json({ error: err.message });
     }
 }
 
