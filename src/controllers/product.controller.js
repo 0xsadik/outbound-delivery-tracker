@@ -1,14 +1,21 @@
-import prisma from '../prismaClient.js'; 
+import prisma from '../prismaClient.js';
+
 
 export async function createProduct(req, res) {
     try {
-        const {sku, name, quantityInStock} = req.body;
+        const { sku, name, quantityInStock } = req.body || {};
+        if (!sku || !name) {
+            return res.status(400).json({ error: "Product 'sku' and 'name' are required." });
+        }
         const product = await prisma.product.create({
-            data: { sku, name, quantityInStock: quantityInStock ?? 0},
+            data: { sku, name, quantityInStock: quantityInStock ? Number(quantityInStock) : 0 },
         });
         res.status(201).json(product);
     } catch (err) {
-        res.status(400).json({error: err.message});
+        if (err.code === 'P2002') {
+            return res.status(409).json({ error: `A product with SKU '${req.body?.sku}' already exists.` });
+        }
+        res.status(400).json({ error: err.message });
     }
 }
 
@@ -37,12 +44,12 @@ export async function getProductById(req, res) {
 export async function updateProduct(req, res) {
     try {
         const product = await prisma.product.update({
-            where: {id: Number(req.params.id)},
+            where: { id: Number(req.params.id) },
             data: req.body,
         });
         res.json(product);
-    } catch(err) {
-        res.status(400).json({error: err.message})
+    } catch (err) {
+        res.status(400).json({ error: err.message })
     }
 }
 

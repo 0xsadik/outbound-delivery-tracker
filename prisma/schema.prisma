@@ -33,6 +33,7 @@ model DeliveryOrder {
   customer    Customer?   @relation(fields: [customerId], references: [id])
   createdAt   DateTime    @default(now())
   items       OrderItem[]
+  delivery    Delivery?
 }
 
 model OrderItem {
@@ -65,7 +66,6 @@ model Delivery {
   dispatchedAt    DateTime?
   deliveredAt     DateTime?
 }
-
 
 model StatusHistory {
   id         Int      @id @default(autoincrement())

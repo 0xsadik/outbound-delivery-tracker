@@ -7,7 +7,7 @@ import {
     updateAgent,
     deleteAgent
 } from '../controllers/deliveryAgent.controller.js';
-
+import { getDeliveriesForAgent } from '../controllers/delivery.controller.js';
 
 const router = Router();
 
@@ -16,7 +16,6 @@ router.get('/', getAgents);
 router.get('/:id', getAgentById);
 router.put('/:id', updateAgent);
 router.delete('/:id', deleteAgent);
-// router.get('/:agentId/deliveries)
+router.get('/:id/deliveries', getDeliveriesForAgent);
 
-
-export default router;
+export default router;

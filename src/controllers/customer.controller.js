@@ -2,12 +2,18 @@ import prisma from '../prismaClient.js';
 
 export async function createCustomer(req, res) {
     try {
-        const { name, email, phone, address } = req.body;
-        const customer = await prisma.customer.create( {
-            data: { name, email, phone, address },
+        const { name, email, phone, address } = req.body || {};
+        if (!name || !email) {
+            return res.status(400).json({ error: "Customer 'name' and 'email' are required." });
+        }
+        const customer = await prisma.customer.create({
+            data: { name, email, phone: phone || null, address: address || null },
         }); 
         res.status(201).json(customer);
     } catch(err) {
+        if (err.code === 'P2002') {
+            return res.status(409).json({ error: `A customer with email '${req.body?.email}' already exists.` });
+        }
         res.status(400).json({ error: err.message });
     }
 }

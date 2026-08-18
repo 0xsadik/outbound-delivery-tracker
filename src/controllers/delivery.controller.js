@@ -16,31 +16,31 @@ export async function assignOrderToAgent(req, res) {
 
     try {
         const order = await prisma.deliveryOrder.findUnique({
-            wehre: {id: orderId},
-            include: {delivery: true},
+            where: { id: orderId },
+            include: { delivery: true },
         });
 
-        if (!order) return res.status(404).json({error: 'Order not found'}); 
-        if (order.delivery) return res.status(400).json({error: 'Order already assigned'});
+        if (!order) return res.status(404).json({ error: 'Order not found' }); 
+        if (order.delivery) return res.status(400).json({ error: 'Order already assigned' });
 
-        const agent = await prisma.deliveryAgent.findUnique({where: {id: agentId}});
+        const agent = await prisma.deliveryAgent.findUnique({ where: { id: Number(agentId) } });
         if (!agent || !agent.isActive) {
-            return res.status(400).json({error: "Agent not found or inactive"});
+            return res.status(400).json({ error: "Agent not found or inactive" });
         }
 
         const delivery = await prisma.$transaction(async (tx) => {
             const newDelivery = await tx.delivery.create({
                 data: {
-                    deliveryOrderId : orderId, 
-                    agentId,
+                    deliveryOrderId: orderId, 
+                    agentId: Number(agentId),
                     status: 'assigned',
                     dispatchedAt: new Date(),
                 },
             });
 
             await tx.deliveryOrder.update({
-                where: {id: orderId},
-                data: {status: 'assigned'},
+                where: { id: orderId },
+                data: { status: 'assigned' },
             });
             return newDelivery;
         });
@@ -50,7 +50,7 @@ export async function assignOrderToAgent(req, res) {
 
         res.status(201).json(delivery);
     } catch (err) {
-        res.status(400).json({error: err.message});
+        res.status(400).json({ error: err.message });
     }
 }
 
@@ -109,11 +109,15 @@ export async function updateDeliveryStatus(req, res) {
 
 
 export async function getDeliveriesForAgent(req, res) {
-    const agentId = Number(req.params.agentId);
-    const deliveries = await prisma.delivery.findMany({
-        where: {agentId},
-        include: { deliveryOrder: {include: {customer: true, orderItems: true}}}, 
-    }); 
-    res.json(deliveries);
+    try {
+        const agentId = Number(req.params.agentId || req.params.id);
+        const deliveries = await prisma.delivery.findMany({
+            where: { agentId },
+            include: { deliveryOrder: { include: { customer: true, items: { include: { product: true } } } } }, 
+        }); 
+        res.json(deliveries);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 }
 

@@ -2,8 +2,8 @@ import express from "express";
 import productRoutes from "./routes/product.routes.js";
 import customerRoutes from "./routes/customer.routes.js";
 import deliveryOrderRoutes from "./routes/deliveryOrder.routes.js";
-import deliveryAgentRoutes from "./routes/deliveryAgent.routes.js"; 
-
+import deliveryAgentRoutes from "./routes/deliveryAgent.routes.js";  
+import deliveryRoutes from './routes/delivery.routes.js';
 
 const app = express();
 
@@ -16,6 +16,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/delivery-orders", deliveryOrderRoutes);
 app.use('/api/delivery-agents', deliveryAgentRoutes);
+app.use('/api/deliveries', deliveryRoutes); 
 
 
 app.use((err, req, res, next) => {
